@@ -1,9 +1,17 @@
 package com.soap.entity;
 
+import javax.persistence.*;
+
+
+@Entity
 public class Team {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
     private Integer id;
 
+    @Column
     private String name;
 
     public Team() {

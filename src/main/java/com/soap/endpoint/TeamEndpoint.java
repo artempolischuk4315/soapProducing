@@ -2,6 +2,7 @@ package com.soap.endpoint;
 
 import com.soap.repository.TeamRepository;
 import com.soap.entity.Team;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
@@ -15,8 +16,12 @@ import java.util.Optional;
 public class TeamEndpoint {
     private static final String NAMESPACE_URI = "http://soapService.tutorial";
 
-    @Resource
     private TeamRepository teamRepository;
+
+    @Autowired
+    public TeamEndpoint(TeamRepository teamRepository) {
+        this.teamRepository = teamRepository;
+    }
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getTeamRequest")
     @ResponsePayload
@@ -24,7 +29,7 @@ public class TeamEndpoint {
         ObjectFactory objectFactory = new ObjectFactory();
         GetTeamResponse response = objectFactory.createGetTeamResponse();
 
-        Optional<Team> teamByName = teamRepository.findTeamByName(request.getName());
+        Optional<Team> teamByName = teamRepository.findByName(request.getName());
         if(teamByName.isPresent()){
             Team teamFromRepo = teamByName.get();
             tutorial.soapservice.Team team = objectFactory.createTeam();
@@ -46,11 +51,13 @@ public class TeamEndpoint {
         ObjectFactory objectFactory = new ObjectFactory();
         SaveTeamResponse response = objectFactory.createSaveTeamResponse();
 
-        Integer newTeamId = teamRepository.saveTeam(request.getName());
-        tutorial.soapservice.Team team = objectFactory.createTeam();
-        team.setId(newTeamId);
+        Team newTeam = new Team();
+        newTeam.setName(request.getName());
 
-        response.setId(team.getId());
+        Team newTeamId = teamRepository.save(newTeam);
+        tutorial.soapservice.Team team = objectFactory.createTeam();
+
+        response.setId(newTeam.getId());
 
         return response;
 

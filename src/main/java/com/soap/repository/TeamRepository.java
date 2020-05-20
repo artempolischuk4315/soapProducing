@@ -18,4 +18,13 @@ public class TeamRepository {
                 .filter(team -> team.getName().equals(name))
                 .findFirst();
     }
+
+    public Integer saveTeam(String name){
+        int size = teams.size();
+
+        System.out.println("Adding: "+name);
+
+        return size+1;
+    }
+
 }

@@ -39,4 +39,5 @@
             <xs:element name="name" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
+
 </xs:schema>

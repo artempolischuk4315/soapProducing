@@ -9,7 +9,6 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import tutorial.soapservice.*;
 
-import javax.annotation.Resource;
 import java.util.Optional;
 
 @Endpoint
@@ -26,10 +25,12 @@ public class TeamEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getTeamRequest")
     @ResponsePayload
     public GetTeamResponse getTeam(@RequestPayload GetTeamRequest request){
+
         ObjectFactory objectFactory = new ObjectFactory();
         GetTeamResponse response = objectFactory.createGetTeamResponse();
 
         Optional<Team> teamByName = teamRepository.findByName(request.getName());
+
         if(teamByName.isPresent()){
             Team teamFromRepo = teamByName.get();
             tutorial.soapservice.Team team = objectFactory.createTeam();
@@ -46,21 +47,14 @@ public class TeamEndpoint {
     @ResponsePayload
     public SaveTeamResponse saveTeam(@RequestPayload SaveTeamRequest request){
 
-        System.out.println("HERE");
-
         ObjectFactory objectFactory = new ObjectFactory();
         SaveTeamResponse response = objectFactory.createSaveTeamResponse();
 
         Team newTeam = new Team();
         newTeam.setName(request.getName());
 
-        Team newTeamId = teamRepository.save(newTeam);
-        tutorial.soapservice.Team team = objectFactory.createTeam();
-
-        response.setId(newTeam.getId());
-
+        response.setId(teamRepository.save(newTeam).getId());
         return response;
-
     }
 
 
